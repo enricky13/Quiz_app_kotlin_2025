@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * use this as a base from now on
  */
 object QuizRetrofitClient {
-    private const val BASE_URL = "https://opentdb.com/api.php"
+    private const val BASE_URL = "https://opentdb.com/"
 
     val instance: QuizApi by lazy {
         Retrofit.Builder()
@@ -20,26 +20,5 @@ object QuizRetrofitClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(QuizApi::class.java)
-    }
-
-    fun fetchTriviaQuestions(amount: Int, category: Int, difficulty: String, type: String){
-        val call = instance.getQuestions(amount, category, difficulty, type)
-        call.enqueue(object : Callback<QuizResponse>{
-            override fun onResponse(call: Call<QuizResponse>, response: Response<QuizResponse>) {
-                /**
-                 * Network call is successful do whatever view things or pass on you need to do here
-                 */
-                if (response.isSuccessful){
-                    val triviaData = response.body()
-                    triviaData?.results?.forEach{
-                        println("Question: ${it.question} Correct Answer: ${it.correctAnswer} Incorrect Answers: ${it.incorrectAnswers}")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<QuizResponse>, response: Throwable) {
-                TODO("Not yet implemented")
-            }
-        })
     }
 }

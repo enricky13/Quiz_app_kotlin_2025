@@ -1,5 +1,7 @@
 package com.example.quiz_game_compose.QuizRepository
 
+import com.google.gson.annotations.SerializedName
+
 data class QuizResponse(
     val responseCode: Int,
     val results: List<Question>
@@ -10,7 +12,9 @@ data class Question(
     val difficulty: String,
     val category: String,
     val question: String,
+    @SerializedName("correct_answer")
     val correctAnswer: String,
+    @SerializedName("incorrect_answers")
     val incorrectAnswers: List<String>
 )
 
