@@ -10,22 +10,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class QuestionDisplayViewModel(
+/**
+ * HiltViewModel noti
+ */
+@HiltViewModel
+class QuestionDisplayViewModel @Inject constructor(
     private val quizApi: QuizApi
 ): ViewModel() {
     private val _uiState = MutableStateFlow<QuizUiState>(QuizUiState.Loading)
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
+    /**
+     * Must make a variable a stateflow if you want to update it and have a composable view updated
+     */
     var currentQuestionIndex by mutableIntStateOf(0) // 0 - 9 limit
     private var correctAnswersCheck = 0
     private var incorrectAnswersCheck = 0
     private val FINDME = "ENRCRZ"
 
     init {
-        retrieveQuestions(10, 9, "easy", "multiple")
+        retrieveQuestions(10,9,"easy", "multiple")
     }
 
     private fun retrieveQuestions(amount: Int, category: Int, difficulty: String, type: String) {
@@ -40,7 +48,6 @@ class QuestionDisplayViewModel(
 //            override fun onFailure(p0: Call<QuizResponse>, p1: Throwable) {
 //            }
 //        })
-
         viewModelScope.launch {
             try {
                 val response = quizApi.getQuestions(amount, category, difficulty, type)
@@ -72,7 +79,9 @@ class QuestionDisplayViewModel(
                 Log.d(FINDME, "Incorrect Answer: $answer")
                 incorrectAnswersCheck++
             }
-            currentQuestionIndex++
+            if ((uiState.value as QuizUiState.Success).data.results.size > currentQuestionIndex){
+                currentQuestionIndex++
+            }
         }
     }
 }
