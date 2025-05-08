@@ -1,4 +1,4 @@
-package com.example.quiz_game_compose.QuizUIView
+package com.example.quiz_game_compose.ComposableScreens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.quiz_game_compose.QuizUIView.QuestionDisplayViewModel
+import com.example.quiz_game_compose.QuizUIView.QuizUiState
 
 @Composable
 fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewModel = hiltViewModel()){
@@ -28,18 +33,25 @@ fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewM
             is QuizUiState.Loading -> {} // Do something while loading
             is QuizUiState.Success -> {
                 val response = (uiState as QuizUiState.Success).data.results
-                DisplayQuestion(response[viewModel.currentQuestionIndex].question)
+                val currentQuestion = response[viewModel.currentQuestionIndex]
+                DisplayQuestion(currentQuestion.question)
                 DisplayAnswers(
                     viewModel.getShuffledAnswers(
-                        response[viewModel.currentQuestionIndex].correctAnswer,
-                        response[viewModel.currentQuestionIndex].incorrectAnswers
+                        currentQuestion.correctAnswer,
+                        currentQuestion.incorrectAnswers
                     ),
                     viewModel
                 )
-                if (shouldNavigate) {
-                    val score = viewModel.correctAnswersCheck
-                    val total = (uiState as QuizUiState.Success).data.results.size
-                    navController.navigate("results/$score/$total")
+                /**
+                 * LaunchedEffect checks the variable (key) to see if it changes then proceed with the
+                 * logic inside the lambda just once. Prevents multiple accidental triggers
+                 */
+                LaunchedEffect(shouldNavigate) {
+                    if (shouldNavigate) {
+                        val score = viewModel.correctAnswersCheck
+                        val total = (uiState as QuizUiState.Success).data.results.size
+                        navController.navigate("results/$score/$total")
+                    }
                 }
             }
 
@@ -66,9 +78,11 @@ fun DisplayQuestion(question: String) {
 
 @Composable
 fun DisplayAnswers(answers: List<String>, viewModel: QuestionDisplayViewModel) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
