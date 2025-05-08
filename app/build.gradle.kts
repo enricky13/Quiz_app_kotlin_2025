@@ -67,6 +67,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.fragment:fragment-ktx:1.5.6")
+    implementation("androidx.navigation:navigation-compose:2.8.9")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -87,5 +93,7 @@ dependencies {
     implementation ("com.google.dagger:dagger:2.50")
     // Hilt core
     implementation("com.google.dagger:hilt-android:2.50")
+    // NavController
+    implementation ("androidx.navigation:navigation-compose:2.9.0")
     kapt("com.google.dagger:hilt-compiler:2.50")
 }

@@ -17,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 
 @Composable
-fun QuestionScreen(viewModel: QuestionDisplayViewModel = hiltViewModel()){
+fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewModel = hiltViewModel()){
     val uiState by viewModel.uiState.collectAsState()
+    val shouldNavigate by viewModel.shouldDisplayResults.collectAsState()
     Column {
         when (uiState) {
             is QuizUiState.Loading -> {} // Do something while loading
@@ -34,9 +36,16 @@ fun QuestionScreen(viewModel: QuestionDisplayViewModel = hiltViewModel()){
                     ),
                     viewModel
                 )
+                if (shouldNavigate) {
+                    val score = viewModel.correctAnswersCheck
+                    val total = (uiState as QuizUiState.Success).data.results.size
+                    navController.navigate("results/$score/$total")
+                }
             }
 
-            is QuizUiState.Error -> {}
+            is QuizUiState.Error -> {
+                // Do something if the api returns an error with retrieving the data
+            }
         }
     }
 }
