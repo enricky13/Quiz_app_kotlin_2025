@@ -12,10 +12,12 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
- * HiltViewModel noti
+ * HiltViewModel notifies the system that this is using Dependancy Injection
  */
 @HiltViewModel
 class QuestionDisplayViewModel @Inject constructor(
@@ -25,10 +27,16 @@ class QuestionDisplayViewModel @Inject constructor(
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
     /**
+     * Observed in QuestionDisplay Screen, once it's true, easy navigation to the display screen
+     */
+    private val _shouldDisplayResults = MutableStateFlow(false)
+    val shouldDisplayResults = _shouldDisplayResults.asStateFlow()
+
+    /**
      * Must make a variable a stateflow if you want to update it and have a composable view updated
      */
     var currentQuestionIndex by mutableIntStateOf(0) // 0 - 9 limit
-    private var correctAnswersCheck = 0
+    var correctAnswersCheck = 0
     private var incorrectAnswersCheck = 0
     private val FINDME = "ENRCRZ"
 
@@ -50,7 +58,10 @@ class QuestionDisplayViewModel @Inject constructor(
 //        })
         viewModelScope.launch {
             try {
-                val response = quizApi.getQuestions(amount, category, difficulty, type)
+                // You are now doing this in the background
+                val response = withContext(Dispatchers.IO){
+                    quizApi.getQuestions(amount, category, difficulty, type)
+                }
                 _uiState.value = QuizUiState.Success(response)
                 Log.d(FINDME, "Response: ${response.results}")
             }
@@ -79,8 +90,11 @@ class QuestionDisplayViewModel @Inject constructor(
                 Log.d(FINDME, "Incorrect Answer: $answer")
                 incorrectAnswersCheck++
             }
-            if ((uiState.value as QuizUiState.Success).data.results.size > currentQuestionIndex){
+            if ((uiState.value as QuizUiState.Success).data.results.size - 1 > currentQuestionIndex){
                 currentQuestionIndex++
+            }
+            else {
+                _shouldDisplayResults.value = true
             }
         }
     }
