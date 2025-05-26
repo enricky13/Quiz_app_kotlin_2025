@@ -1,6 +1,5 @@
 package com.example.quiz_game_compose.QuizRepository
 
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
