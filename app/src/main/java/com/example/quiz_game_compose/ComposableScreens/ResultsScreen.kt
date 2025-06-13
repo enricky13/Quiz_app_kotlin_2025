@@ -5,12 +5,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.example.quiz_game_compose.QuizRoutes
 
 @Composable
 fun DisplayResults(navController: NavController, score: Int, total: Int) {
     Column {
         Text("Total correct Answers: $score out of $total")
-        Button({navController.navigate("StartScreen")}) {
+        Button({navController.navigate(QuizRoutes.START_SCREEN)}) {
             Text("Restart the quiz?")
         }
     }

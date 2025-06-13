@@ -47,7 +47,7 @@ fun QuizNavGraph() {
     }
 }
 
-data class QuizRoutes (
-    val quiz: String = "quiz",
-    val results: String = "results"
-)
+object QuizRoutes {
+    const val QUIZ_SCREEN = "quiz"
+    const val START_SCREEN = "start"
+}

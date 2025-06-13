@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.quiz_game_compose.QuizRoutes
 import com.example.quiz_game_compose.QuizUIView.QuestionDisplayViewModel
 import com.example.quiz_game_compose.R
 
@@ -87,7 +88,7 @@ fun StartScreen(navController: NavController, viewModel: QuestionDisplayViewMode
             onClick = {
                 if (selectedCategory != defaultCategory && selectedDifficulty != defaultDifficulty){
                     viewModel.retrieveQuestions(10, selectedCategory, selectedDifficulty, "multiple")
-                    navController.navigate("quiz")
+                    navController.navigate(QuizRoutes.QUIZ_SCREEN)
                 }
             }
         ) {
