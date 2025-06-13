@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 fun DisplayResults(navController: NavController, score: Int, total: Int) {
     Column {
         Text("Total correct Answers: $score out of $total")
-        Button({navController.navigate("quiz")}) {
+        Button({navController.navigate("StartScreen")}) {
             Text("Restart the quiz?")
         }
     }
