@@ -24,15 +24,21 @@ import androidx.navigation.NavController
 import com.example.quiz_game_compose.QuizUIView.QuestionDisplayViewModel
 import com.example.quiz_game_compose.QuizUIView.QuizUiState
 
+private val FINDME = "FINDME"
 @Composable
-fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewModel = hiltViewModel()){
+fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewModel = hiltViewModel()
+){
     val uiState by viewModel.uiState.collectAsState()
     val shouldNavigate by viewModel.shouldDisplayResults.collectAsState()
+    Log.d(FINDME, "UIState: $uiState")
     Column {
         when (uiState) {
-            is QuizUiState.Loading -> {} // Do something while loading
+            is QuizUiState.Loading -> {
+                Log.d(FINDME, "Loading Compose")
+            } // Do something while loading
             is QuizUiState.Success -> {
                 val response = (uiState as QuizUiState.Success).data.results
+                Log.d(FINDME, "Success Compose: $response")
                 val currentQuestion = response[viewModel.currentQuestionIndex]
                 DisplayQuestion(currentQuestion.question)
                 DisplayAnswers(
@@ -56,6 +62,7 @@ fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewM
             }
 
             is QuizUiState.Error -> {
+                Log.d(FINDME, "Error Compose")
                 // Do something if the api returns an error with retrieving the data
             }
         }
