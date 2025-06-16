@@ -35,7 +35,7 @@ fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewM
         when (uiState) {
             is QuizUiState.Loading -> {
                 Log.d(FINDME, "Loading Compose")
-            } // Do something while loading
+            }
             is QuizUiState.Success -> {
                 val response = (uiState as QuizUiState.Success).data.results
                 Log.d(FINDME, "Success Compose: $response")
