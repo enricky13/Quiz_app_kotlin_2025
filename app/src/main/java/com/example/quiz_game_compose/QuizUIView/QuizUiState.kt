@@ -1,6 +1,6 @@
 package com.example.quiz_game_compose.QuizUIView
 
-import com.example.quiz_game_compose.QuizRepository.QuizResponse
+import com.example.quiz_game_compose.QuizRepositoryData.QuizResponse
 
 /**
  * Saves and holds a reference to the state of the UI, by default it is Loading

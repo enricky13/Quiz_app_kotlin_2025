@@ -1,18 +1,17 @@
 package com.example.quiz_game_compose.QuizUIView
 
+import android.text.Html
 import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quiz_game_compose.QuizRepository.QuizApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
-import com.example.quiz_game_compose.R
+import com.example.quiz_game_compose.QuizRepositoryData.QuizRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,7 +22,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class QuestionDisplayViewModel @Inject constructor(
-    private val quizApi: QuizApi
+    private val quizRepository: QuizRepository
 ): ViewModel() {
     /**
      *  Whenever we recreate this class we must remember that we are setting the default UIState to laoding, if we
@@ -62,10 +61,21 @@ class QuestionDisplayViewModel @Inject constructor(
         Log.d("FINDME", "amount: $amount, category: $category, difficulty: $difficulty, type: $type")
         viewModelScope.launch {
             try {
-                // You are now doing this in the background
-                val response = withContext(Dispatchers.IO){
-                    quizApi.getQuestions(amount, getCategory(category), difficulty.lowercase(), type)
+                // We are retrieving the response here from the API in the background thread
+                val rawResponse = withContext(Dispatchers.IO){
+                    quizRepository.fetchQuiz(amount, getCategory(category), difficulty.lowercase(), type)
                 }
+                // We are updated the response correcting incoming HTML strings
+                val updatedResponse = rawResponse.results.map { questionData ->
+                    questionData.copy(
+                        question = questionData.question
+                            .upperCaseFirstLetter()
+                            .upperComma()
+                    )
+                }
+                // We are updating rawResponse with the updatedResponse
+                val response = rawResponse.copy(results = updatedResponse)
+                // Kotlin Extension: takes the string and modifies the first letter to be upper case
                 _uiState.value = QuizUiState.Success(response)
                 Log.d(FINDME, "Response: ${response.results} Response Code:${response.responseCode}")
             }
@@ -85,6 +95,18 @@ class QuestionDisplayViewModel @Inject constructor(
             else -> {20}
         }
     }
+
+    private fun String.upperCaseFirstLetter(): String {
+        return this.replaceFirstChar { it.uppercaseChar() }
+    }
+
+    private fun String.upperComma(): String{
+        val originalString = this
+        val correctString = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY).toString()
+        Log.d("FINDME", "Original String: $originalString CorrectString: $correctString")
+        return correctString
+    }
+
 
     fun getShuffledAnswers(correctAnswer: String, incorrectAnswers: List<String>): List<String> {
         /**
