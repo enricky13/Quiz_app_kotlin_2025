@@ -1,4 +1,4 @@
-package com.example.quiz_game_compose.QuizRepository
+package com.example.quiz_game_compose.QuizRepositoryData
 
 import dagger.Module
 import dagger.Provides

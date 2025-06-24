@@ -39,15 +39,20 @@ fun QuestionScreen(navController: NavController, viewModel: QuestionDisplayViewM
             is QuizUiState.Success -> {
                 val response = (uiState as QuizUiState.Success).data.results
                 Log.d(FINDME, "Success Compose: $response")
-                val currentQuestion = response[viewModel.currentQuestionIndex]
-                DisplayQuestion(currentQuestion.question)
-                DisplayAnswers(
-                    viewModel.getShuffledAnswers(
-                        currentQuestion.correctAnswer,
-                        currentQuestion.incorrectAnswers
-                    ),
-                    viewModel
-                )
+                if(response.isNotEmpty()){
+                    val currentQuestion = response[viewModel.currentQuestionIndex]
+                    DisplayQuestion(currentQuestion.question)
+                    DisplayAnswers(
+                        viewModel.getShuffledAnswers(
+                            currentQuestion.correctAnswer,
+                            currentQuestion.incorrectAnswers
+                        ),
+                        viewModel
+                    )
+                }
+                else {
+                    // Response is empty, so account to to show if this is the scenario
+                }
                 /**
                  * LaunchedEffect checks the variable (key) to see if it changes then proceed with the
                  * logic inside the lambda just once. Prevents multiple accidental triggers

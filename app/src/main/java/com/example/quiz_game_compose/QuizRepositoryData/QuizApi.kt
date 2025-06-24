@@ -1,4 +1,4 @@
-package com.example.quiz_game_compose.QuizRepository
+package com.example.quiz_game_compose.QuizRepositoryData
 
 import retrofit2.http.GET
 import retrofit2.http.Query
